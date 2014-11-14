@@ -8,14 +8,14 @@ CentralLimit <- function(n){
 }
 sampsize <- 100
 mean <- 0
-sd <- 1
+sd <- 1000
 CentralLimit(1000)
 head(samples_means)
-x   <- seq(-5,5,length=1000)
+x   <- seq(-(5*sd),(5*sd),length=1000)
 y   <- dnorm(x,mean, sd)
 par(mfrow=c(1,2))
-plot(x,y, type="l",ylab="pdf",xlab="standard Norm",col="purple",lwd=4)
-hist(samples_means,freq = F,yaxt="n")
-x <- seq(-3,3,length=1000)
+plot(x,y, type="l",ylab="pdf",xlab="standard Norm",col="purple",lwd=4,yaxt="n")
+hist(samples_means,freq = F,yaxt="n",main = "")
+x <- seq(-(sd(samples_means)),(sd(samples_means)),length=1000)
 curve(dnorm(x,mean=mean(samples_means),
             sd=sd(samples_means)),col="purple",lwd=4,add=T,yaxt="n")
