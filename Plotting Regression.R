@@ -1,0 +1,10 @@
+data(swiss)
+head(swiss)
+par(mfrow=c(3,2))
+attach(swiss)
+swiss <- swiss[order(Agriculture),]
+head(swiss)
+plot(Fertility ~ Agriculture)
+fit <-lm(Fertility ~ Agriculture)
+abline(fit)
+plot(fit)
