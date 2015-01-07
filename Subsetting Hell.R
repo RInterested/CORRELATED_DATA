@@ -1,3 +1,4 @@
+#How to subset:
 > mtcars[mtcars$mpg]
 Error in `[.data.frame`(mtcars, mtcars$mpg) : undefined columns selected
 > mtcars[,mtcars$mpg]
