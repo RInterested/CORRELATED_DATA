@@ -1,0 +1,3 @@
+nosim <- 1000
+n <- 10
+sd(apply(matrix(rnorm(nosim * n), nosim),1,mean))
