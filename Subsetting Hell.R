@@ -7,8 +7,14 @@ Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
 Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
 Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
 
-SELECTING A COLUMN:
+#SELECTING A COLUMN:
 -------------------
+
+YES:
+> mtcars[,"mpg"]
+ [1] 21.0 21.0 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 17.8 16.4
+[13] 17.3 15.2 10.4 10.4 14.7 32.4 30.4 33.9 21.5 15.5 15.2 13.3
+[25] 19.2 27.3 26.0 30.4 15.8 19.7 15.0 21.4
 
 NO:
 > mtcars[mtcars$mpg]
@@ -19,14 +25,16 @@ Error in `[.data.frame`(mtcars, , mtcars$mpg) :
 > mtcars[,mpg]
 Error in `[.data.frame`(mtcars, , mpg) : object 'mpg' not found
 
-YES:
-> mtcars[,"mpg"]
- [1] 21.0 21.0 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 17.8 16.4
-[13] 17.3 15.2 10.4 10.4 14.7 32.4 30.4 33.9 21.5 15.5 15.2 13.3
-[25] 19.2 27.3 26.0 30.4 15.8 19.7 15.0 21.4
+#SELECTING TWO COLUMNS:
+-----------------------
 
-SELECTING TWO COLUMNS:
-----------------------
+YES:
+> mtcars[,c("mpg","cyl")]
+                     mpg cyl
+Mazda RX4           21.0   6
+Mazda RX4 Wag       21.0   6
+Datsun 710          22.8   4
+Hornet 4 Drive      21.4   6
 
 NO:
 > mtcars[,"mpg""cyl"]
@@ -43,15 +51,7 @@ Error in `[.data.frame`(mtcars, , "mpg cyl") : undefined columns selected
 > mtcars[,"mpg";"cyl"]
 Error: unexpected ';' in "mtcars[,"mpg";"
 
-YES:
-> mtcars[,c("mpg","cyl")]
-                     mpg cyl
-Mazda RX4           21.0   6
-Mazda RX4 Wag       21.0   6
-Datsun 710          22.8   4
-Hornet 4 Drive      21.4   6
-
-SELECT THE VALUES OF TWO COLUMNS FOR A PARTICULAR ROW:
+#SELECT THE VALUES OF TWO COLUMNS FOR A PARTICULAR ROW:
 ------------------------------------------------------
 
 YES:
@@ -59,7 +59,7 @@ YES:
           mpg cyl
 Mazda RX4  21   6
 
-RETURN ONLY THE VALUES OF A COLUMN CONDITIONAL ON THE VALUES ON A DIFFERENT COLUMN:
+#RETURN ONLY THE VALUES OF A COLUMN CONDITIONAL ON THE VALUES ON A DIFFERENT COLUMN:
 -----------------------------------------------------------------------------------
 
 head(wideCW14)
@@ -82,6 +82,23 @@ YES:
 wideCW14[wideCW14$Diet=="1","gain"]
  [1]  NA  NA  NA  55  56  76  83  NA 100 114 115 116 132 159 163 164 175 182 225 264
 
+and...
+
+YES:
+For numerical variables, no need for " ":
+wideCW14[wideCW14$time0==41,"gain"]
+ [1]  NA  NA  55  76  83 116 164 182 225 264 155 164 223
+
+#DEALING WITH NA'S AFTER SUBSETTING:
+-----------------------------------
+
+mean(wideCW14[wideCW14$time0==41,"gain"])
+[1] NA
+mean(wideCW14[wideCW14$time0==41,"gain"],na.rm=T)
+[1] 155.1818
+
+but...
+
 NO: 
 wideCW14["Diet"=="1","gain"]
 numeric(0)
@@ -101,16 +118,4 @@ wideCW14[wideCW14$Diet=="1",wideCW14$gain]
 Error in `[.data.frame`(wideCW14, wideCW14$Diet == "1", wideCW14$gain) : 
   undefined columns selected
 
-YES:
-For numerical variables, no need for " ":
-wideCW14[wideCW14$time0==41,"gain"]
- [1]  NA  NA  55  76  83 116 164 182 225 264 155 164 223
-
-DEALING WITH NA'S AFTER SUBSETTING:
------------------------------------
-
-> mean(wideCW14[wideCW14$time0==41,"gain"])
-[1] NA
-> mean(wideCW14[wideCW14$time0==41,"gain"],na.rm=T)
-[1] 155.1818
 
