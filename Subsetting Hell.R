@@ -62,6 +62,13 @@ Mazda RX4  21   6
 #RETURN ONLY THE VALUES OF A COLUMN CONDITIONAL ON THE VALUES ON A DIFFERENT COLUMN:
 -----------------------------------------------------------------------------------
 
+#Select the values of a column corresponding to specific values in a separate column: 
+#We want the miles per gallon of 6 cylinder cars:
+
+data <- mtcars$mpg[mtcars$cyl==6]
+data
+[1] 21.0 21.0 21.4 18.1 19.2 17.8 19.7
+
 head(wideCW14)
   Diet Chick time0 time2 time4 time6 time8 time10 time12 time14 time16 time18 time20 time21 gain
 1    1    18    39    35    NA    NA    NA     NA     NA     NA     NA     NA     NA     NA   NA
