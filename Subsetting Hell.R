@@ -88,6 +88,13 @@ For numerical variables, no need for " ":
 mtcars[mtcars$cyl==6,"mpg"]
 [1] 21.0 21.0 21.4 18.1 19.2 17.8 19.7
 
+
+
+#RETURN ONLY THE VALUES OF ALL COLUMNS CONDITIONAL ON THE VALUES ON A SPECIFIC COLUMN:
+--------------------------------------------------------------------------------------
+
+mtcars[mtcars$cyl < 8, ]
+
 #DEALING WITH NA'S AFTER SUBSETTING:
 -----------------------------------
 
