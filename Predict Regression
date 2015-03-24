@@ -4,3 +4,6 @@ predict(fit, data.frame(wt=3),interval="prediction")
 fit <- lm(mpg ~ wt, data = mtcars)
 point <- data.frame(wt=3)
 predict(fit,point,interval="prediction")
+
+fit <- lm(mpg ~ wt * am, mtcars)
+predict(fit, data.frame(wt = 0, am = "automatic"))
