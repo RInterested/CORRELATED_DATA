@@ -1,0 +1,12 @@
+x <- rnorm(1e4)
+y <- rnorm(1e4)
+dat <- cbind(x,y)
+
+
+library(RColorBrewer)
+
+smoothScatter(dat, nrpoints = 10, 
+              colramp = colorRampPalette(brewer.pal(8,"OrRd")))
+
+
+smoothScatter(dat, colramp = colorRampPalette(c("red4","orange","red")))
