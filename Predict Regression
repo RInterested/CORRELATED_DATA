@@ -7,3 +7,12 @@ predict(fit,point,interval="prediction")
 
 fit <- lm(mpg ~ wt * am, mtcars)
 predict(fit, data.frame(wt = 0, am = "automatic"))
+
+fit <- lm(mpg ~ wt, mtcars)
+predict(fit, data.frame(wt = mtcars$wt))
+
+fit <- lm(mpg ~ wt, mtcars)
+dat <- data.frame(wt = mtcars$wt)
+fitted <- predict(fit, dat)
+data <- cbind(dat, fitted)
+smoothScatter(data, colramp = colorRampPalette(c("blue4","orange","red")))
