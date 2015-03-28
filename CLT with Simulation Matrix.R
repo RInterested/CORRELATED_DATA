@@ -12,7 +12,7 @@ str(apply(matrix(rnorm(nosim * n),nosim),1,mean))
 # [1] 0.1581139
 #Close!
   
-##From the example at the beginning of the assignment:
+##Alternative approach:
   
 samples_mean = NULL
 for (i in 1 : 1000) samples_mean = c(samples_mean, mean(rnorm(40)))
