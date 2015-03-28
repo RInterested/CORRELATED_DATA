@@ -27,3 +27,14 @@ for (n in 1:50)
 }
 str(sqr.squared)
  num [1:50] 1 9 25 49 81 121 169 225 289 361 ...
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# From Omitted Variables Code (in Simulations) - function "variables" stated before loop:
+
+coef_x3 <- NULL
+coef_x3_full <- NULL
+for (i in 1:1000){
+  coef_x3[i] = variables()[1]
+  coef_x3_full[i] = variables()[2]
+}
+mean(coef_x3)
+mean(coef_x3_full)
