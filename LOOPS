@@ -12,7 +12,7 @@ sqr = seq(1, 100, by=2)
 sqr.squared = NULL
 for (n in 1:50)
 {
-  sqr.squared[] = sqr[n]^2
+  sqr.squared[] = sqr[n]^2 # The empty [ ] is a no-no for these loops.
 }
 sqr.squared
 #numeric(0)
