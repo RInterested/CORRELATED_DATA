@@ -1,6 +1,17 @@
 samples_mean = NULL
 for (i in 1 : 1000) samples_mean = c(samples_mean, mean(rnorm(40)))
 
+# Or, exactly the same:
+
+samples_mean = NULL
+for (i in 1 : 1000) samples_mean <- c(samples_mean, mean(rnorm(40)))
+
+str(samples_mean)
+#Vector [1, 1000]  num [1:1000]
+samples_mean
+sd(samples_mean)
+#[1] 0.1542957
+
 str(samples_mean)
 #Vector [1, 1000]  num [1:1000]
 samples_mean
