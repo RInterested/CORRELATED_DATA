@@ -1,0 +1,18 @@
+set.seed(1)
+
+n = 10
+x = seq(0, n , by = 0.1)
+y = sin(x/2) + rnorm(length(x))/2
+db = data.frame(x=x, y=y)
+
+B <- bs(x, knots = 1:9, Boundary.knots = c(0,10), degree = 1)
+
+reg <- lm(y ~ B)
+P <- predict(reg,interval="confidence")
+
+plot(db, pch= 20, col="dark blue")
+polygon(c(x, rev(x)), c(P[,2], rev(P[,3])), col="light blue", border=NA)
+points (db, pch= 20, col="dark blue")
+
+lines(x, P[,1], col="dark blue",lwd = 3)
+abline(v = c(knots))
