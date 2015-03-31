@@ -1,5 +1,5 @@
 set.seed(1)
-
+require(splines)
 n = 10
 x = seq(0, n , by = 0.1)
 y = sin(x/2) + rnorm(length(x))/2
