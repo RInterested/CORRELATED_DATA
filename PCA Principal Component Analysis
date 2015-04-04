@@ -1,0 +1,27 @@
+x <- c(2.5, 0.5, 2.2, 1.9, 3.1, 2.3, 2.1, 1.0, 1.5, 1.1)
+y <- c(2.4, 0.7, 2.9, 2.2, 3.0, 2.7, 1.6, 1.1, 1.6, 0.9)
+dat <- data.frame(cbind(x, y))
+dat$x <- c(dat$x - mean(dat$x))
+dat$y <- c(dat$y - mean(dat$y))
+plot(dat, pch = 19, col="dark gray")
+names <- c(1:10)
+text(dat$x, dat$y, labels=c(1:10), cex= 0.5, pos=2)
+C <- cov(dat)
+eigen(C)
+v1 <- eigen(cov(dat))$vectors[,1]
+v2 <- eigen(cov(dat))$vectors[,2]
+ 
+arrows(x0 = -v1[1], y0 = -v1[2], x1 = v1[1], y1 = v1[2], 
+       code=2, col = 'dark red', lwd = 3)
+arrows(x0 = -v2[1], y0 = -v2[2], x1 = v2[1], y1 = v2[2], 
+       code=2, col = 'orange', lwd = 3)
+
+A <- rbind(v1, v2)
+B <- t(dat)
+Dat <- t(A%*%B)
+colnames(Dat) <- c("x","y")
+Dat <- as.data.frame(Dat)
+abline(h = 0, col = "dark red", lwd = 3)
+abline(v =0, col = "orange", lwd = 3)
+points(Dat,pch = 19,col="dark red")
+text(Dat$x, Dat$y, labels=c(1:10), cex= 0.5, pos=2)
