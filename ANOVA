@@ -1,4 +1,4 @@
-gapCleaned <- read.csv(file.choose())
+gapCleaned <- read.csv(file.choose()) # I will need the "ANOVA_simulation.csv" downloaded to R wd.
 head(gapCleaned)
 means<- round(tapply(gapCleaned$breastcancer, gapCleaned$continent, mean), digits=2)
 
