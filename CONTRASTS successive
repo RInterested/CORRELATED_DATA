@@ -1,0 +1,43 @@
+# CONTRASTS:
+    
+data(OrchardSprays)
+str(OrchardSprays)
+
+plot(decrease~treatment,data=OrchardSprays)
+
+# Notice that the variance increases with the treatment (width boxplots)
+# being larger in the control group H.
+# the lm model assumes homoskadesticity:
+
+model1=lm(decrease~treatment,data=OrchardSprays)
+summary(model1)
+
+# To reflect the heteroskadesticy in the data we need nlme - 
+# generalized least squares:
+
+library(nlme)
+model2=gls(decrease~treatment,data=OrchardSprays)
+
+# So far is identical to lm. However, if we use the weigths entry that indicates a 
+# varIdent function. The variance is a function of the treatment.
+
+model3=update(model2,weights=varIdent(form=~1|treatment)) 
+
+AIC(model2,model3) # Akaike´s information criterion
+
+# The AIC is lower for model3 _> Model3 better.
+summary(model2)
+summary(model3)
+
+# In model3 it says that there are different SD per stratum.
+# We can see this in the Std.Error, largest for treatment H = control
+
+# In the summary we have contrasts of one level to A. But to get more contrasts:
+
+library(MASS)
+options(contrasts = c("contr.sdif","contr.sdif"))
+
+model4=gls(decrease~treatment,data=OrchardSprays)
+model5=update(model4,weights=varIdent(form=~1|treatment)) 
+
+summary(model5)
