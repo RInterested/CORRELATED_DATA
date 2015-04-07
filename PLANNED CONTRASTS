@@ -1,0 +1,114 @@
+# PLANNED CONTRASTS MANUAL CALCULATION:
+
+# How many comparisons can we make without adjusting
+# our alpha:
+
+# 1. Degrees of freedom < or = to groups - 1
+# 2. Comparisons are orthogonal.
+
+# Test for orthogonality = 
+# sum for all groups of ni * Cij * Cik = 0
+# ni = number of individuals in group i
+# j = contrast 1; k = contrast 2
+# C is an index |C| = # of groups in the contrast set.
+# C11 = control group ; contrast 1. = 2 = con'l & sugars
+# C21 = - 1
+# C31 = - 1
+# so that C11 + c21 + c31 = 0.
+# With contrast 2:
+# c12 = 0 - because it doesn't involve the controls.
+# c22 = 1
+# c32 = -1
+
+# Test: n1 c11 c12 + n2 c21 c22 + n3 c31 c32 = 0
+# Our two contrasts are orthogonal.
+
+# Data is of two observations on the stem growth (counts)
+# in different medium (control, fructose, sucrose)
+
+dat <- data.frame(control=c(2,0),
+    fructose=c(1,3),sucrose=c(2,6))
+dat
+
+y_bar_CL <- mean(dat$control)
+y_bar_FR <- mean(dat$fructose)
+y_bar_SU <- mean(dat$sucrose)
+y_bar_SUGARS <- mean(as.matrix(dat[,2:3]))
+y_TOTAL <- mean(as.matrix(dat))
+
+# CONTRAST 1: CONTROL v SUGARS (BOTH OF THEM)
+# CONTRAST 2: FRUCTOSE v SUCROSE
+
+# CONTRAST 1:
+
+# F = MS_cl vs.sugars / MSw/in
+
+# Denominator SSwin = sum across groups of differences
+# between individuals and means of the group:
+
+
+v <- NULL
+vec <- NULL
+for (j in 1:ncol(dat)){
+    for(i in 1:nrow(dat)) {vec [i] <- 
+            sum((dat[i,j] - mean(dat[,j]))^2)}
+    v[j] <- sum(vec)
+    SSwin <- sum(v)
+}
+
+# dfwin <- a (number of groups = 3) * 
+#(number of observations in each group = n - 1) 
+
+dfwin <- 3 * (2 - 1)
+
+MSwin <- SSwin/dfwin
+
+MSwin
+
+# Numerator SScl vs. sugars:
+
+SSbet <- 2 * (y_bar_CL - y_TOTAL)^2 + 4 * (y_bar_SUGARS - y_TOTAL)^2
+
+# dfbet = number of groups (2) - 1 = 1
+
+dfbet <- 1
+
+MS_cl_v_sugars = SSbet/dfbet
+
+F_ratio <- MS_cl_v_sugars/MSwin
+MS_cl_v_sugars
+F_ratio
+pf(F_ratio,df1=1,df2=3, lower.tail=F)
+
+#CONTRAST 2:
+
+#Same denominator:
+MSwin
+
+#Numerator:
+
+data <- data.frame(fructose=dat$fructose, sucrose=dat$sucrose)
+
+v <- NULL
+for (j in 1:ncol(data)){
+    v[j] <- sum((mean(as.matrix(data)[,j] -(mean(as.matrix(data)))))^2)
+    SSbet <- nrow(dat) * sum(v)
+}
+
+#dfredom = 2 groups - 1 = 1
+dfredom <- 1
+
+MSbet <- SSbet/dfredom
+MSbet
+
+F_ratio2 <- MSbet/MSwin
+F_ratio2
+
+pf(F_ratio2,df1=1,df2=3, lower.tail=F)
+
+dat <- data.frame(stem=c(2,0,1,3,2,6),control= c(1,1,0,0,0,0),
+    fructose=c(0,0,1,1,0,0), sucrose=c(0,0,0,0,1,1))
+dat
+summary(aov(stem ~.,dat))
+#Notice MS_cl_v_sugars (5.333) and MSwin (4) in the 
+#"Mean Sq" column of the anova for CONTRAST 1.
