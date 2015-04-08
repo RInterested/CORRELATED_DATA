@@ -1,0 +1,64 @@
+# ORTHOGONAL CONTRASTS:
+
+# Independent variable: Number of bacterial colonies grown.
+# Different combinations of antibiotics added to cultures.
+
+pnc <- c(15, 12, 11, 10, 35, 19, 14, 12, 12, 13)
+soap <- c(41, 40, 37, 18, 15, 41, 39, 36, 35, 38)
+cloram <- c(25, 23, 27, 30, 22, 27, 25, 20, 29, 24)
+metro <- c(10, 12, 9, 8, 11, 12, 14, 9, 12, 11) 
+control <- c(41, 38, 39, 42, 43, 37, 40, 33, 29, 34)
+
+dat <- as.data.frame(cbind(pnc, soap, cloram, metro, control))
+
+total_group <- colSums(dat)
+mean_group <- colMeans(dat)
+mean_group_minus_grand_mean <- mean_group - mean(as.matrix(dat))
+v <- 0
+SSwin <-0
+sum_sq_win <- for (i in 1:ncol(dat)){
+    for(j in 1:nrow(dat)){
+        v[j] <- (dat[j,i] - mean(as.matrix(dat[,i])))^2
+    }
+    SSwin[i] <- sum(v)
+}
+SS_treat <- sum(mean_group_minus_grand_mean^2 * 10)
+MS_treat <- SS_treat/4
+
+SS_error <- sum(SSwin)
+MS_error <- SS_error/45
+
+F_ratio <- MS_treat/MS_error
+p_value <- pf(F_ratio,45,4,lower.tail=F)
+p_value
+
+
+# Contrasts:
+
+# Are antibiotics better than soap or control group:
+C1 <- c(2,-3,2,2,-3) # The sum is zero.
+# Is penicillin superior to other antibiotics:
+C2 <- c(2,0,-1,-1,0)
+# Are they orthogonal:
+contrastmatrix<-cbind(C1,C2)
+contrastmatrix
+crossprod(contrastmatrix)
+# Bingo! Off diagonal entries are zero -> vectors orthogonal!
+# Cloramphenicol differs from metronidazole:
+C3 <- c(0,0,1,-1,0)
+contrastmatrix <- cbind(C1, C2, C3)
+crossprod(contrastmatrix)
+# Perfect!
+# Does soap differ from control?
+C4 <- c(0,1,0,0,-1)
+contrastmatrix <- cbind(C1, C2, C3, C4)
+crossprod(contrastmatrix)
+# Again all zeros in off-diagonal positions.
+
+#Sum squares for contrasts:
+SSCtr <- nrow(dat)*(t(contrastmatrix)%*%mean_group)^2/
+colSums((contrastmatrix)^2)
+# Since contrasts have 1 df:
+F_ratio_Ctr <- SSCtr/MS_error
+p_value <- pf(F_ratio_Ctr,1,45,lower.tail=F)
+p_value
