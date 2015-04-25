@@ -1,0 +1,39 @@
+# https://stats.stackexchange.com/questions/147559/fisher-exact-test-on-paired-data
+# 1300 pts and 1300 matched controls are studied. 
+# The smoking status is tabled as follows:
+  
+#               Normal   
+#             |no     |yes|
+# Cancer|No   |1000   |40 |
+#       |Yes  |200    |60 |
+  
+# Each entry of the table shows information about a CASE-CONTROL PAIR: 
+# 1000 means in 1000 case-control pairs, neither was a smoker. 
+#40 is the number of case-control pairs where control was smoker 
+#and cancer patient was not, and so on. 
+#Following R code can be used to generate this table and do McNemar's Test:
+
+mat = as.table(rbind(c(1000, 40), c( 200, 60) ))
+colnames(mat) <- rownames(mat) <- c("Nonsmoker", "Smoker")
+names(dimnames(mat)) = c("Cancer", "Normal")
+mat
+
+mcnemar.test(mat)
+
+# McNemar's test is also used to assess effect of an 
+# intervention on a binary outcome variable. 
+# The pair of before-after outcome is tabled and tested as above.
+
+# If smoking status is listed in your dataframe mydf as follows:
+  
+#   pairID  cancer  control
+#     1       1       1
+#     2       1       1
+#     3       1       0
+#     ...
+
+# McNemars test can be done with following R commands:
+
+tt = with(mydf, table(cancer, control))
+tt
+mcnemar.test(tt)
