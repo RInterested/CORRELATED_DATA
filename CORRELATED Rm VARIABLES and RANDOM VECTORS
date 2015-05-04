@@ -3,6 +3,8 @@
 C <- matrix(c(1,0.4,0.4,1), nrow = 2)
 set.seed(0)
 
+require(mvtnorm)
+
 SN <- rmvnorm(mean = c(0,0), sig = C, n = 1e5)
 
 sd(SN[,1])
