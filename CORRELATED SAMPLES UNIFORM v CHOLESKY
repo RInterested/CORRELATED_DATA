@@ -1,0 +1,34 @@
+cor_samples <- function(r, n, mean1, mean2, sd1, sd2){
+  C <- matrix(c(1,r,r,1), nrow = 2)
+  require(mvtnorm)
+  SN <- rmvnorm(mean = c(0,0), sig = C, n = n)
+  U <- pnorm(SN)
+  U1 <- U[,1]
+  U2 <- U[,2]
+  
+  Y1 <<- qnorm(U1, mean = mean1,sd = sd1) 
+  Y2 <<- qnorm(U2, mean = mean2,sd = sd2) 
+  
+  sample_measures <<- as.data.frame(c(mean(Y1), mean(Y2), sd(Y1), sd(Y2), cor(Y1,Y2)), 
+                    names<-c("mean Y1", "mean Y2", "SD Y1", "SD Y2", "cor(Y1,Y2)"))
+  sample_measures
+}
+
+Cholesky_samples <- function(r, n, mean1, mean2, sd1, sd2){
+C <- matrix(c(1,r,r,1), nrow = 2)
+L <- chol(C)
+X1 <- rnorm(n)
+X2 <- rnorm(n)
+X <- rbind(X1,X2)
+
+Y <- t(L)%*%X
+Y1 <- Y[1,]
+Y2 <- Y[2,]
+
+N_1 <<- Y[1,] * sd1 + mean1
+N_2 <<- Y[2,] * sd2 + mean2
+
+sample_measures <<- as.data.frame(c(mean(N_1), mean(N_2), sd(N_1), sd(N_2), cor(N_1, N_2)), 
+                  names<-c("mean N_1", "mean N_2", "SD N_1", "SD N_2","cor(N_1,N_2)"))
+sample_measures
+}
