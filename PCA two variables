@@ -1,4 +1,5 @@
 #goes with file pca_example.csv in Drive
+#goes with file pca_example.csv in Drive
 
 dat<-read.csv(file.choose())
 head(dat)
@@ -139,21 +140,18 @@ segments(x0 = ss1a$x0, x1 = ss1a$x1, y0 = ss1a$y0, y1 = ss1a$y1, col='light blue
 
 ##SECOND PART RESTORING THE DATA:
 
-dat2 <- dat
-colnames(dat2)[2] <- "atomic.no"
-dat2[,2:3]<-c(rnorm(15)/10,rnorm(15)/10)
+dat2 <- score_df
 head(dat2)
 X1 <- as.matrix(dat2[,2:3]) 
-head(X)
+head(X1)
 
 #Plot of two columns:
 
 dev.off()
 par(mfrow=c(2,2))
 
-plot(melting.point ~ atomic.no, col = compounds, pch = 19, 
-     xlim=c(-.1,.1),ylim=c(-.1,.1),data = dat2)
-with(dat2,text(melting.point ~ atomic.no, labels = compounds, cex=0.6, pos=2))
+plot(V2 ~ V1, col = compounds, xlim=c(-2,2), ylim=c(-2,2),pch = 19,data = dat2)
+with(dat2,text(V2 ~ V1, labels = compounds, cex=0.6, pos=2))
 abline(v=0,h=0, col = "dark gray")
 
 arrows(x0 = 0, y0 = 0, x1 = lambda[1]*e_vectors[1,1], y1 = lambda[1]*e_vectors[1,2],col="red",lwd=2)
@@ -163,26 +161,32 @@ abline(0, e_vectors[1,2]/e_vectors[1,1],col='purple')
 abline(0, e_vectors[2,1]/e_vectors[2,2],col='light blue')
 
 
-# Dilate:
+# Rotate:
 
-dil <- X1%*%lambda_matrix
+rot <- X1%*%solve(e_vectors)
 
-dil_dat <- cbind(dat$compounds,as.data.frame(dil)) # Reformatting original dat with autoscaled values
-colnames(dil_dat) <- c("compounds","Dil1","Dil2")
-head(dil_dat)
-
-plot(Dil2 ~ Dil1, col = compounds, pch = 19, xlim=c(-0.1,0.1),ylim=c(-0.1,0.1),data = dil_dat)
-with(dil_dat,text(Dil2 ~ Dil1, labels = compounds, cex=0.6, pos=2))
-abline(v=0,h=0, col = "dark gray")
-
-#Rotate data
-
-rot <- dil%*%e_vectors
-rot_dat <- cbind(dat$compounds,as.data.frame(rot))
-colnames(rot_dat) <- c("compounds","Recons.1","Recons.2")
+rot_dat <- cbind(dat$compounds,as.data.frame(rot)) # Reformatting original dat with autoscaled values
+colnames(rot_dat) <- c("compounds","Rot1","Rot2")
 head(rot_dat)
 
-plot(Recons.1 ~ Recons.2, col = compounds, pch = 19, data = rot_dat)
+plot(Rot2 ~ Rot1, col = compounds, xlim=c(-2,2), ylim=c(-2,2),pch = 19,data = rot_dat)
+with(rot_dat,text(Rot2 ~ Rot1, labels = compounds, cex=0.6, pos=2))
+abline(v=0,h=0, col = "dark gray")
+
+arrows(x0 = 0, y0 = 0, x1 = lambda[1]*e_vectors[1,1], y1 = lambda[1]*e_vectors[1,2],col="red",lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = lambda[2]*e_vectors[2,1], y1 = lambda[2]*e_vectors[2,2],col="blue", lwd=2)
+
+abline(0, e_vectors[1,2]/e_vectors[1,1],col='purple')
+abline(0, e_vectors[2,1]/e_vectors[2,2],col='light blue')
+
+# Contract data
+
+contract <- rot%*%solve(lambda_matrix)
+contract_dat <- cbind(dat$compounds,as.data.frame(contract))
+colnames(contract_dat) <- c("compounds","Recons.1","Recons.2")
+head(contract_dat)
+
+plot(Recons.2 ~ Recons.1, col = compounds, pch = 19, data = contract_dat)
 abline(v=0,h=0, col = "dark gray")
 
 plot(melting.point ~ atomic.no, col = compounds, pch = 19, data = scaled_dat)
