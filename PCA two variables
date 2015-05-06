@@ -1,5 +1,4 @@
 #goes with file pca_example.csv in Drive
-#goes with file pca_example.csv in Drive
 
 dat<-read.csv(file.choose())
 head(dat)
@@ -42,9 +41,6 @@ head(score_df)
 eigen(C)$values[1]/sum(eigen(C)$values) * 100
 
 par(mfrow=c(2,2))
-
-
-
 
 #Plot of two columns:
 
@@ -147,8 +143,6 @@ head(X1)
 
 #Plot of two columns:
 
-dev.off()
-par(mfrow=c(2,2))
 
 plot(V2 ~ V1, col = compounds, xlim=c(-2,2), ylim=c(-2,2),pch = 19,data = dat2)
 with(dat2,text(V2 ~ V1, labels = compounds, cex=0.6, pos=2))
