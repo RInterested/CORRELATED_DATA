@@ -1,18 +1,19 @@
 #goes with file pca_example.csv in Drive
+#goes with file pca_example.csv in Drive
 
 dat<-read.csv(file.choose())
 head(dat)
 colnames(dat)[7] <- "lattice"
 colnames(dat)[2] <- "atomic.no"
-dat <- subset(dat[1:15,1:3])
-head(dat)
+dat1 <- subset(dat[1:15,1:3])
+head(dat1)
 
-scaled_dat <- as.data.frame(scale(dat[,2:3],center=T)) 
+scaled_dat <- as.data.frame(scale(dat1[,2:3],center=T)) 
 head(scaled_dat)
-X <- as.matrix(scaled_dat) # Autoscaled matrix of A.
+X <- as.matrix(scaled_dat) 
 head(X)
 
-scaled_dat <- cbind(dat$compounds,scaled_dat) # Reformatting original dat with autoscaled values
+scaled_dat <- cbind(dat1$compounds,scaled_dat) # Reformatting original dat with autoscaled values
 colnames(scaled_dat)[1] <- "compounds"
 head(scaled_dat)
 
@@ -21,17 +22,20 @@ head(scaled_dat)
 C <- cov(X) # Covariance matrix
 C
 
-lambda <- eigen(C)$values
+lambda <- eigen(C)$values # Eigenvalues
 lambda_matrix <- diag(2)*eigen(C)$values # Eigenvalues matrix
 lambda_matrix
 
-e_vectors <- eigen(C)$vectors # Eigenvectors matrix (6 x 6)
+
+e_vectors <- eigen(C)$vectors # Eigenvectors matrix (2 x 2)
 e_vectors
 
-score_matrix <- X %*% e_vectors # Score matrix = (44 x 6) %*% (6 x 6) = (44 x 6)
+
+
+score_matrix <-  X %*% lambda_matrix %*% e_vectors # Score matrix = (15 x 2) %*% (2 x 2) = (15 x 2)
 head(score_matrix)
 
-score_df <- cbind(dat[,1],as.data.frame(score_matrix))
+score_df <- cbind(dat1[,1],as.data.frame(score_matrix))
 colnames(score_df)[1] <- names(dat)[1]
 head(score_df)
 
@@ -40,22 +44,23 @@ head(score_df)
 
 eigen(C)$values[1]/sum(eigen(C)$values) * 100
 
-par(mfrow=c(2,2))
+
 
 #Plot of two columns:
 
 plot(melting.point ~ atomic.no, col = compounds, pch = 19, data = scaled_dat)
-with(scaled_dat,text(melting.point ~ atomic.no, labels = compounds, cex=0.6, pos=2))
 abline(v=0,h=0, col = "dark gray")
 
 #Overlap pertinent evectors
 
-arrows(x0 = 0, y0 = 0, x1 = e_vectors[1,1], y1 = e_vectors[1,2],col="red",lwd=2)
-arrows(x0 = 0, y0 = 0, x1 = e_vectors[2,1], y1 = e_vectors[2,2],col="blue", lwd=2)
 
-abline(0, e_vectors[1,2]/e_vectors[1,1],col='purple')
+abline(0, e_vectors[1,2]/e_vectors[1,1],col='red')
 abline(0, e_vectors[2,1]/e_vectors[2,2],col='light blue')
 
+arrows(x0 = 0, y0 = 0, x1 = lambda[1]*e_vectors[1,1], y1 = lambda[1]*e_vectors[1,2],col="red",lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = lambda[2]*e_vectors[2,1], y1 = lambda[2]*e_vectors[2,2],col="blue", lwd=2)
+
+with(scaled_dat,text(melting.point ~ atomic.no, labels = compounds, pos=3))
 #Plot the lines from first evector to points
 
 line1 <- c(0, e_vectors[1,2]/e_vectors[1,1])
@@ -75,34 +80,38 @@ perp.segment.coord <- function(x0, y0, line1){
 ss <- perp.segment.coord(scaled_dat$atomic.no, scaled_dat$melting.point, line1)
 # do.call(segments, ss)
 # which is the same as:
-segments(x0 = ss$x0, x1 = ss$x1, y0 = ss$y0, y1 = ss$y1, col='purple')
+segments(x0 = ss$x0, x1 = ss$x1, y0 = ss$y0, y1 = ss$y1, col='red')
 
 
 plot(melting.point ~ atomic.no, col = compounds, pch = 19, data = scaled_dat)
-with(scaled_dat,text(melting.point ~ atomic.no, labels = compounds, cex=0.6, pos=2))
+
 abline(v=0,h=0, col = "dark gray")
 
 #Overlap pertinent evectors
 
-arrows(x0 = 0, y0 = 0, x1 = e_vectors[1,1], y1 = e_vectors[1,2],col="red",lwd=2)
-arrows(x0 = 0, y0 = 0, x1 = e_vectors[2,1], y1 = e_vectors[2,2],col="blue", lwd=2)
 
-abline(0, e_vectors[1,2]/e_vectors[1,1],col='purple')
-abline(0, e_vectors[2,1]/e_vectors[2,2],col='light blue')
+
+abline(0, e_vectors[1,2]/e_vectors[1,1],col='red')
+abline(0, e_vectors[2,1]/e_vectors[2,2],col='light blue',lwd=2)
+
+arrows(x0 = 0, y0 = 0, x1 = lambda[1]*e_vectors[1,1], y1 = lambda[1]*e_vectors[1,2],col="red",lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = lambda[2]*e_vectors[2,1], y1 = lambda[2]*e_vectors[2,2],col="blue", lwd=2)
 
 
 line1a <- c(0, e_vectors[2,2]/e_vectors[2,1])
 ssa <- perp.segment.coord(scaled_dat$atomic.no, scaled_dat$melting.point, line1a)
 # do.call(segments, ss)
 # which is the same as:
-segments(x0 = ssa$x0, x1 = ssa$x1, y0 = ssa$y0, y1 = ssa$y1, col='light blue')
+segments(x0 = ssa$x0, x1 = ssa$x1, y0 = ssa$y0, y1 = ssa$y1, lwd= 2, col='light blue')
+
+with(scaled_dat,text(melting.point ~ atomic.no, labels = compounds, pos=3))
 
 #Now compare side-by-side with plotted first and second column Scores
 
 plot(score_df$V2 ~ score_df$V1, col=compounds, pch = 19, xlab='V1', ylab='V2',data=scaled_dat)
-with(score_df,text(V2 ~ V1, labels=compounds,cex = 0.6, pos = 2))
-abline(v=0, col = 'purple')
-abline(h=0, col='light blue')
+
+abline(v=0, col = 'red')
+abline(h=0, col='light blue',lwd=2)
 
 
 perp.segment.horiz <- function(x0, y0){
@@ -114,12 +123,15 @@ perp.segment.horiz <- function(x0, y0){
 }
 
 ss1 <- perp.segment.horiz(score_df$V1, score_df$V2)
-segments(x0 = ss1$x0, x1 = ss1$x1, y0 = ss1$y0, y1 = ss1$y1, col='purple')
+segments(x0 = ss1$x0, x1 = ss1$x1, y0 = ss1$y0, y1 = ss1$y1, col='red')
+
+with(score_df,text(V2 ~ V1, labels=compounds, pos = 3))
+
 
 plot(score_df$V2 ~ score_df$V1, col=compounds, pch = 19, xlab='V1', ylab='V2',data=scaled_dat)
-with(score_df,text(V2 ~ V1, labels=compounds,cex = 0.6, pos = 2))
-abline(v=0, col = 'purple')
-abline(h=0, col='light blue')
+
+abline(v=0, col = 'red')
+abline(h=0, col='light blue',lwd=2)
 
 
 perp.segment.vert <- function(x0, y0){
@@ -131,10 +143,12 @@ perp.segment.vert <- function(x0, y0){
 }
 
 ss1a <- perp.segment.vert(score_df$V1, score_df$V2)
-segments(x0 = ss1a$x0, x1 = ss1a$x1, y0 = ss1a$y0, y1 = ss1a$y1, col='light blue')
+segments(x0 = ss1a$x0, x1 = ss1a$x1, y0 = ss1a$y0, y1 = ss1a$y1, col='light blue',lwd=2)
 
-
+with(score_df,text(V2 ~ V1, labels=compounds, pos = 3))
 ##SECOND PART RESTORING THE DATA:
+
+
 
 dat2 <- score_df
 head(dat2)
@@ -144,45 +158,68 @@ head(X1)
 #Plot of two columns:
 
 
-plot(V2 ~ V1, col = compounds, xlim=c(-2,2), ylim=c(-2,2),pch = 19,data = dat2)
-with(dat2,text(V2 ~ V1, labels = compounds, cex=0.6, pos=2))
+plot(V2 ~ V1, col = compounds, xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),pch = 19,data = dat2)
+
 abline(v=0,h=0, col = "dark gray")
+
+
+
+abline(0, e_vectors[1,2]/e_vectors[1,1],col='red')
+abline(0, e_vectors[2,1]/e_vectors[2,2],col='light blue',lwd=2)
 
 arrows(x0 = 0, y0 = 0, x1 = lambda[1]*e_vectors[1,1], y1 = lambda[1]*e_vectors[1,2],col="red",lwd=2)
 arrows(x0 = 0, y0 = 0, x1 = lambda[2]*e_vectors[2,1], y1 = lambda[2]*e_vectors[2,2],col="blue", lwd=2)
-
-abline(0, e_vectors[1,2]/e_vectors[1,1],col='purple')
-abline(0, e_vectors[2,1]/e_vectors[2,2],col='light blue')
-
+with(dat2,text(V2 ~ V1, labels = compounds, pos=2))
 
 # Rotate:
 
 rot <- X1%*%solve(e_vectors)
 
-rot_dat <- cbind(dat$compounds,as.data.frame(rot)) # Reformatting original dat with autoscaled values
+rot_dat <- cbind(dat1$compounds,as.data.frame(rot)) # Reformatting original dat with autoscaled values
 colnames(rot_dat) <- c("compounds","Rot1","Rot2")
 head(rot_dat)
 
-plot(Rot2 ~ Rot1, col = compounds, xlim=c(-2,2), ylim=c(-2,2),pch = 19,data = rot_dat)
-with(rot_dat,text(Rot2 ~ Rot1, labels = compounds, cex=0.6, pos=2))
+plot(Rot2 ~ Rot1, col = compounds, xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),
+     pch = 19,main="Data Rotation",data = rot_dat)
+
 abline(v=0,h=0, col = "dark gray")
+
+
+abline(0, e_vectors[1,2]/e_vectors[1,1],col='red')
+abline(0, e_vectors[2,1]/e_vectors[2,2],col='light blue',lwd=2)
 
 arrows(x0 = 0, y0 = 0, x1 = lambda[1]*e_vectors[1,1], y1 = lambda[1]*e_vectors[1,2],col="red",lwd=2)
 arrows(x0 = 0, y0 = 0, x1 = lambda[2]*e_vectors[2,1], y1 = lambda[2]*e_vectors[2,2],col="blue", lwd=2)
 
-abline(0, e_vectors[1,2]/e_vectors[1,1],col='purple')
-abline(0, e_vectors[2,1]/e_vectors[2,2],col='light blue')
-
+with(rot_dat,text(Rot2 ~ Rot1, labels = compounds, pos=3))
 # Contract data
 
-contract <- rot%*%solve(lambda_matrix)
-contract_dat <- cbind(dat$compounds,as.data.frame(contract))
+contract <- rot %*% solve(lambda_matrix)
+contract_dat <- cbind(dat1$compounds,as.data.frame(contract))
 colnames(contract_dat) <- c("compounds","Recons.1","Recons.2")
 head(contract_dat)
 
-plot(Recons.2 ~ Recons.1, col = compounds, pch = 19, data = contract_dat)
+plot(Recons.2 ~ Recons.1, col = compounds, xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),pch = 19, main="Data Contraction", 
+     xlab="Reconstructed Atomic Number", ylab="Reconstructed melting.point",data = contract_dat)
+
 abline(v=0,h=0, col = "dark gray")
 
-plot(melting.point ~ atomic.no, col = compounds, pch = 19, data = scaled_dat)
-with(scaled_dat,text(melting.point ~ atomic.no, labels = compounds, cex=0.6, pos=2))
+abline(0, e_vectors[1,2]/e_vectors[1,1],col='red')
+abline(0, e_vectors[2,1]/e_vectors[2,2],col='light blue',lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = lambda[1]*e_vectors[1,1], y1 = lambda[1]*e_vectors[1,2],col="red",lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = lambda[2]*e_vectors[2,1], y1 = lambda[2]*e_vectors[2,2],col="blue", lwd=2)
+
+with(contract_dat,text(Recons.2 ~ Recons.1, labels = compounds, pos=3))
+
+plot(melting.point ~ atomic.no, col = compounds, xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),pch = 19, main="Original Data",data = scaled_dat)
+
 abline(v=0,h=0, col = "dark gray")
+
+
+
+abline(0, e_vectors[1,2]/e_vectors[1,1],col='red')
+abline(0, e_vectors[2,1]/e_vectors[2,2],col='light blue',lwd=2)
+
+arrows(x0 = 0, y0 = 0, x1 = lambda[1]*e_vectors[1,1], y1 = lambda[1]*e_vectors[1,2],col="red",lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = lambda[2]*e_vectors[2,1], y1 = lambda[2]*e_vectors[2,2],col="blue", lwd=2)
+with(scaled_dat,text(melting.point ~ atomic.no, labels = compounds, pos=3))
