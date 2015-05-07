@@ -1,6 +1,5 @@
 
-#goes with file pca_example.csv in Drive
-#goes with file pca_example.csv in Drive
+#Goes with PCA_example.csv file
 
 dat<-read.csv(file.choose())
 head(dat)
