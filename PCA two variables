@@ -88,9 +88,9 @@ eigen(C)$values[1]/sum(eigen(C)$values) * 100
 #FIRST PLOT:
 
 
-plot(melting.point ~ atomic.no, col = as.factor(rownames(scaled_dat)), pch = 19, data = scaled_dat)
-abline(v=0,h=0, col = "dark gray",
-       main="Data Scaled and Centered - Distance to First EigenV")
+plot(melting.point ~ atomic.no, col = as.factor(rownames(scaled_dat)), 
+     main="Data Scaled and Centered - Distance to First EigenV", pch = 19, data = scaled_dat)
+abline(v=0,h=0, col = "dark gray")
 
 #Overlap pertinent evectors
 
@@ -330,4 +330,6 @@ arrows(x0 = 0, y0 = 0, x1 = lambda[2]*e_vectors[2,1], y1 = lambda[2]*e_vectors[2
 points(melting.point ~ atomic.no, col = as.factor(rownames(scaled_dat)), 
      xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),pch = 19, data = scaled_dat)
 with(scaled_dat,text(melting.point ~ atomic.no, labels = as.factor(rownames(scaled_dat)), pos=3))
+
+
 
