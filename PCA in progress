@@ -1,60 +1,115 @@
-#Goes with PCA_example.csv file
+#Goes with PC_coreA_example.csv file
 
 dat<-read.csv(file.choose())
 head(dat)
-dat1 <- subset(dat[1:15,1:3])
-row.names(dat1) <- dat1$compounds
-dat1 <- dat1[,-1]
-colnames(dat1)[1] <- "atomic.no"
-head(dat1)
+core_dat <- subset(dat[1:15,1:3])
+row.names(core_dat) <- core_dat$compounds
+core_dat <- core_dat[,-1]
+colnames(core_dat)[1] <- "atomic.no"
+head(core_dat)
 
-scaled_dat <- as.data.frame(scale(dat1, center=T, scale = F)) 
-head(scaled_dat)
+# core_dat is the real data set we are working with.
 
-C <- cov(dat1) # Covariance matrix
-C
 
-lambda <- eigen(C)$values # Eigenvalues
-lambda_matrix <- diag(2)*eigen(C)$values # Eigenvalues matrix
-lambda_matrix
+# Now we center the values in relation to their means without
+# normalizing (scale = F) using the SD:
 
-e_vectors <- eigen(C)$vectors # Eigenvectors matrix (2 x 2)
-e_vectors
+centered_dat <- as.data.frame(scale(core_dat, center=T, scale = F)) 
+head(centered_dat)
 
+
+# To mimic the operation in princomp() we use the original data (core_dat)
+# to calculate the covariance:
+
+C_core <- cov(core_dat) # C_coreovariance matrix
+C_core
+
+
+# And we use this variance (C_core) to calculate eigen() values:
+
+core_values <- eigen(C_core)$values # Eigenvalues
+core_values_matrix <- diag(2)*eigen(C_core)$values # Eigenvalues matrix
+core_values_matrix
+
+core_vectors <- eigen(C_core)$vectors # Eigenvectors matrix (2 x 2)
+core_vectors
+
+# Now we can calculate the score matrix manually and to do so
+# we use for the first time the centered values.
+# We will mixed here the eigen vectors calculated using the 
+# ORIGINAL data with the CENTERED data.
 
 #THE BIG FORMULA:
 
-score_matrix <-  t((t(e_vectors)%*%t(scaled_dat)))
+score_matrix <-  t((t(core_vectors)%*%t(centered_dat)))
 
 colnames(score_matrix) <-c("V1","V2")
 
-# Truly scaled would be 1/sd:
-
-vectors <- eigen(cov(scaled_dat))$vectors
-
-score_scaled <- t((t(vectors)%*%t(scale(dat1,scale=T,center=T))))
-
-colnames(score_scaled) <-c("V1","V2")
-
-# Compared matrix obtained manually:
+# Compared to matrix obtained manually:
 
 head(score_matrix)
 
 # ... to doing it automatically:
 
-auto <- princomp(dat1)
+auto <- princomp(core_dat) # or
+
 
 head(auto$scores)
 
-#Iiiii...dentical!!!!!
+# Iiiii...dentical!!!!!
 
-#relative influence of eigenvalues, for instance PC1:
+# What about the eigen values obtained automatically...
 
-eigen(C)$values[1]/sum(eigen(C)$values) * 100
+princomp(covmat=C_core)$sd^2 # vs...
+
+core_values #and...
+
+prcomp(core_dat)$rotation # vs...
+
+core_vectors
+
+# Truly scaled would be 1/sd, and this is what we'll use TO PLOT
+# the linear transformations:
+
+scaled_dat <- scale(core_dat,scale=T,center=T)
+
+# If we use the original eigen() results we'll get a mismatch.
+# For instance calling...
+
+head(scaled_dat)
+
+# We get values between - 2 and 2, whereas...
+
+core_values
+
+# 53829.7896   110.8414
+
+# Unplottable!!
+
+# So we can use the core_vectors, but we need new values:
+
+C_scaled <- cov(scaled_dat)
+
+scaled_values <- eigen(C_scaled)$values
+
+score_scaled <- t(t(core_vectors)%*%t(scaled_dat))
+
+colnames(score_scaled) <-c("V1","V2")
+
+
+# or, simply...
+
+prcomp(core_dat, center = T, scale = T)$sdev^2
+
+#To calculate the elative influence of eigenvalues, for instance:
+
+eigen(C_core)$values[1]/sum(eigen(C_core)$values) * 100
+
+
 
 #FIRST PLOT:
 
-scaled_cent <- scale(dat1, center = T, scale = T)
+scaled_cent <- scale(core_dat, center = T, scale = T)
 
 plot(melting.point ~ atomic.no, col = as.factor(rownames(scaled_cent)), 
      pch = 19, xlim=c(-2.2,2.2), ylim=c(-2.2,2.2),data = scaled_cent)
@@ -68,18 +123,18 @@ plot(melting.point ~ atomic.no, col = as.factor(rownames(scaled_cent)),
 
 # Draw line subtended by eigenvectors:
 
-abline(0, e_vectors[2,1]/e_vectors[1,1],col='red')
-abline(0, e_vectors[2,2]/e_vectors[1,2],col='blue')
+abline(0, core_vectors[2,1]/core_vectors[1,1],col='red')
+abline(0, core_vectors[2,2]/core_vectors[1,2],col='blue')
 
-arrows(x0 = 0, y0 = 0, x1 = e_vectors[1,1], 
-       y1 = e_vectors[2,1],col="red",lwd=2)
-arrows(x0 = 0, y0 = 0, x1 = e_vectors[1,2], 
-       y1 = e_vectors[2,2],col="blue", lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = core_values1core_vectors[1,1], 
+       y1 = core_vectors[2,1],col="red",lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = core_vectors[1,2], 
+       y1 = core_vectors[2,2],col="blue", lwd=2)
 
 
 #Plot the lines from first evector to points
 
-line1 <- c(0, e_vectors[2,1]/e_vectors[1,1])
+line1 <- c(0, core_vectors[2,1]/core_vectors[1,1])
 
 perp.segment.coord <- function(x0, y0, line1){
   
@@ -101,7 +156,7 @@ segments(x0 = ss$x0, x1 = ss$x1, y0 = ss$y0, y1 = ss$y1, col='red', lwd=2)
 
 
 points(melting.point ~ atomic.no, col = as.factor(rownames(scaled_cent)), 
-     pch = 19, xlim=c(-2.2,2.2), ylim=c(-2.2,2.2),data = scaled_cent)
+       pch = 19, xlim=c(-2.2,2.2), ylim=c(-2.2,2.2),data = scaled_cent)
 
 text(melting.point ~ atomic.no, 
      labels = as.factor(rownames(scaled_cent)), pos=3, data = scaled_cent)
@@ -117,21 +172,21 @@ plot(melting.point ~ atomic.no, col = as.factor(rownames(scaled_cent)),
 
 #Overlap pertinent evectors
 
-abline(0, e_vectors[2,1]/e_vectors[1,1],col='red')
-abline(0, e_vectors[2,2]/e_vectors[1,2],col='blue')
+abline(0, core_vectors[2,1]/core_vectors[1,1],col='red')
+abline(0, core_vectors[2,2]/core_vectors[1,2],col='blue')
 
-arrows(x0 = 0, y0 = 0, x1 = e_vectors[1,1], y1 = e_vectors[2,1],col="red",lwd=2)
-arrows(x0 = 0, y0 = 0, x1 = e_vectors[1,2], y1 = e_vectors[2,2],col="blue", lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = core_vectors[1,1], y1 = core_vectors[2,1],col="red",lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = core_vectors[1,2], y1 = core_vectors[2,2],col="blue", lwd=2)
 
 
-line1a <- c(0, e_vectors[2,2]/e_vectors[1,2])
+line1a <- c(0, core_vectors[2,2]/core_vectors[1,2])
 ssa <- perp.segment.coord(scaled_cent$atomic.no, scaled_cent$melting.point, line1a)
 # do.call(segments, ss)
 # which is the same as:
 segments(x0 = ssa$x0, x1 = ssa$x1, y0 = ssa$y0, y1 = ssa$y1, col='blue', lwd=2)
 
 points(melting.point ~ atomic.no, col = as.factor(rownames(scaled_cent)), 
-     pch = 19, xlim=c(-2.2,2.2), ylim=c(-2.2,2.2),data = scaled_cent)
+       pch = 19, xlim=c(-2.2,2.2), ylim=c(-2.2,2.2),data = scaled_cent)
 
 text(melting.point ~ atomic.no, 
      labels = as.factor(rownames(scaled_cent)), pos=3, data = scaled_cent)
@@ -199,7 +254,7 @@ text(V2 ~ V1,
 
 
 
-##SECOND PART RESTORING THE DATA:
+##SEC_coreOND PART RESTORING THE DATA:
 
 
 
@@ -214,11 +269,11 @@ plot(V2 ~ V1, col = as.factor(rownames(dat2)),
 
 
 
-abline(0, e_vectors[2,1]/e_vectors[1,1],col='red', lwd=2)
-abline(0, e_vectors[2,2]/e_vectors[1,2],col='blue',lwd=2)
+abline(0, core_vectors[2,1]/core_vectors[1,1],col='red', lwd=2)
+abline(0, core_vectors[2,2]/core_vectors[1,2],col='blue',lwd=2)
 
-arrows(x0 = 0, y0 = 0, x1 = e_vectors[1,1], y1 = e_vectors[2,1],col="red",lwd=2)
-arrows(x0 = 0, y0 = 0, x1 = e_vectors[1,2], y1 = e_vectors[2,2],col="blue", lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = core_vectors[1,1], y1 = core_vectors[2,1],col="red",lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = core_vectors[1,2], y1 = core_vectors[2,2],col="blue", lwd=2)
 
 text(V2 ~ V1, 
      labels = as.factor(rownames(dat2)), pos=3, data = dat2)
@@ -236,43 +291,43 @@ plot(Rot2 ~ Rot1, col = as.factor(rownames(rot1)),  xlim=c(-2.2,2.2), ylim=c(-2.
 
 
 
-abline(0, e_vectors[2,1]/e_vectors[1,1],col='red', lwd=2)
-abline(0, e_vectors[2,2]/e_vectors[1,2],col='blue',lwd=2)
+abline(0, core_vectors[2,1]/core_vectors[1,1],col='red', lwd=2)
+abline(0, core_vectors[2,2]/core_vectors[1,2],col='blue',lwd=2)
 
-arrows(x0 = 0, y0 = 0, x1 = e_vectors[1,1], y1 = e_vectors[2,1],col="red",lwd=2)
-arrows(x0 = 0, y0 = 0, x1 = e_vectors[1,2], y1 = e_vectors[2,2],col="blue", lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = core_vectors[1,1], y1 = core_vectors[2,1],col="red",lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = core_vectors[1,2], y1 = core_vectors[2,2],col="blue", lwd=2)
 
 text(Rot2 ~ Rot1, 
      labels = as.factor(rownames(rot1)), pos=3, data = rot1)
 
-# Contract data
+# C_coreontract data
 
-contract <- rot %*% solve(lambda_matrix)
+contract <- rot %*% solve(core_values_matrix)
 contract_dat <- as.data.frame(contract)
 colnames(contract_dat) <- c("Recons.1","Recons.2")
 head(contract_dat)
 
-plot(Recons.2 ~ Recons.1, col = as.factor(rownames(contract_dat)), xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),pch = 19, main="Data Contraction", 
+plot(Recons.2 ~ Recons.1, col = as.factor(rownames(contract_dat)), xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),pch = 19, main="Data C_coreontraction", 
      xlab="Reconstructed Atomic Number", ylab="Reconstructed melting.point",data = contract_dat)
 
 abline(v=0,h=0, col = "dark gray")
 
-abline(0, e_vectors[1,2]/e_vectors[1,1],col='red')
-abline(0, e_vectors[2,1]/e_vectors[2,2],col='light blue',lwd=2)
-arrows(x0 = 0, y0 = 0, x1 = lambda[1]*e_vectors[1,1], y1 = lambda[1]*e_vectors[1,2],col="red",lwd=2)
-arrows(x0 = 0, y0 = 0, x1 = lambda[2]*e_vectors[2,1], y1 = lambda[2]*e_vectors[2,2],col="blue", lwd=2)
+abline(0, core_vectors[1,2]/core_vectors[1,1],col='red')
+abline(0, core_vectors[2,1]/core_vectors[2,2],col='light blue',lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = core_values[1]*core_vectors[1,1], y1 = core_values[1]*core_vectors[1,2],col="red",lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = core_values[2]*core_vectors[2,1], y1 = core_values[2]*core_vectors[2,2],col="blue", lwd=2)
 
 with(contract_dat,text(Recons.2 ~ Recons.1, labels =as.factor(rownames(contract_dat)), pos=3))
 
-plot(melting.point ~ atomic.no, col = as.factor(rownames(scaled_dat)), xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),pch = 19, main="Original Data",data = scaled_dat)
+plot(melting.point ~ atomic.no, col = as.factor(rownames(centered_dat)), xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),pch = 19, main="Original Data",data = centered_dat)
 
 abline(v=0,h=0, col = "dark gray")
 
 
 
-abline(0, e_vectors[1,2]/e_vectors[1,1],col='red')
-abline(0, e_vectors[2,1]/e_vectors[2,2],col='light blue',lwd=2)
+abline(0, core_vectors[1,2]/core_vectors[1,1],col='red')
+abline(0, core_vectors[2,1]/core_vectors[2,2],col='light blue',lwd=2)
 
-arrows(x0 = 0, y0 = 0, x1 = lambda[1]*e_vectors[1,1], y1 = lambda[1]*e_vectors[1,2],col="red",lwd=2)
-arrows(x0 = 0, y0 = 0, x1 = lambda[2]*e_vectors[2,1], y1 = lambda[2]*e_vectors[2,2],col="blue", lwd=2)
-with(scaled_dat,text(melting.point ~ atomic.no, labels = as.factor(rownames(scaled_dat)), pos=3))
+arrows(x0 = 0, y0 = 0, x1 = core_values[1]*core_vectors[1,1], y1 = core_values[1]*core_vectors[1,2],col="red",lwd=2)
+arrows(x0 = 0, y0 = 0, x1 = core_values[2]*core_vectors[2,1], y1 = core_values[2]*core_vectors[2,2],col="blue", lwd=2)
+with(centered_dat,text(melting.point ~ atomic.no, labels = as.factor(rownames(centered_dat)), pos=3))
