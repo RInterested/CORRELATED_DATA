@@ -32,7 +32,11 @@ scores <- (as.matrix(dat))%*%e_vec
 prcomp(dat)$sd^2
 prcomp(dat)$rotation
 head(prcomp(dat)$x)
-head(scores)
+
+
+princomp(dat)$sdev^2
+princomp(dat)$loadings
+head(princomp(dat)$scores)
 
 colnames(scores) <- c("PC1","PC2")
 
