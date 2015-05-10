@@ -1,3 +1,6 @@
+#Goes with PCA_example.csv file
+
+dat<-read.csv(file.choose())
 head(dat)
 colnames(dat)[7] <- "lattice"
 colnames(dat)[2] <- "atomic.no"
@@ -41,6 +44,7 @@ head(score_matrix)
 # For scores:
 
 auto <- prcomp(dat1, center = T, scale = T)
+# or auto <- prcomp(scaled_dat)
 head(auto$x)
 
 #or
