@@ -1,0 +1,3 @@
+install.packages('gsheet')
+library(gsheet)
+gsheet2tbl('https://drive.google.com/open?id=1X9ccexhCU2xNI99MDj6WWRdOza1J_IbTSI-yuPDsxOE&authuser=0')
