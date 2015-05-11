@@ -52,10 +52,12 @@ plot(ev, pch = 19, col = as.factor(row.names(ev)),
      xaxt ="n", ylim = c(-.7,.7), main = "Loadings")
 axis1 = axis(1,at = seq(0.705,0.708, by=0.001))
 abline(h = 0, col = "firebrick")
-with(ev,text(PC2 ~ PC1, labels = as.factor(rownames(ev)), pos=2))
+with(ev,text(PC2 ~ PC1, labels = as.factor(rownames(ev)), pos=2, cex=1.5))
 
 
 score_matrix <-  X %*% e_vectors # Score matrix = (15 x 2) %*% (2 x 2) = (15 x 2)
+# Same as
+head(t(t(e_vectors) %*% t(X)))
 colnames(score_matrix) <-c("PC1","PC2")
 head(score_matrix)
 
@@ -85,15 +87,7 @@ auto$sdev^2
 princomp(covmat=C)$sd^2
 
 
-# We will obtain weighted scores for plotting by multiplying by the 
-# matrix of eigenvalues and the matrix of eigenvectors.
-# This will show which subjects move together depending on the eigenvectors.
 
-score_matrix <- X %*% lambda_matrix %*% e_vectors
-colnames(score_matrix) <-c("PC1","PC2")
-
-# Now the score matrix is going to be different from 
-# that obtained with R functions.
 
 
 #END OF LINEAR ALGEBRA
@@ -147,7 +141,8 @@ ss <- perp.segment.coord(scaled_dat$atomic.no, scaled_dat$melting.point, line1)
 segments(x0 = ss$x0, x1 = ss$x1, y0 = ss$y0, y1 = ss$y1, col='red')
 
 points(melting.point ~ atomic.no, col = as.factor(rownames(scaled_dat)), pch = 19, data = scaled_dat)
-with(scaled_dat,text(melting.point ~ atomic.no, labels = as.factor(rownames(scaled_dat)), pos=1, cex = 0.5))
+with(scaled_dat,text(melting.point ~ atomic.no, labels = as.factor(rownames(scaled_dat)),
+                     pos=1, cex=1.2))
 
 
 
@@ -181,7 +176,8 @@ segments(x0 = ssa$x0, x1 = ssa$x1, y0 = ssa$y0, y1 = ssa$y1, col='purple')
 
 points(melting.point ~ atomic.no, col = as.factor(rownames(scaled_dat)), pch = 19, data = scaled_dat)
 
-with(scaled_dat,text(melting.point ~ atomic.no, labels = as.factor(rownames(scaled_dat)), pos=1, cex=0.5))
+with(scaled_dat,text(melting.point ~ atomic.no, labels = as.factor(rownames(scaled_dat)),
+                     pos=1, cex=1.2))
 
 
 
@@ -213,7 +209,7 @@ segments(x0 = ss1$x0, x1 = ss1$x1, y0 = ss1$y0, y1 = ss1$y1, col='red')
 
 
 points(PC2 ~ PC1, col=as.factor(rownames(score)), pch = 19, xlab='V1', ylab='V2',data=score)
-with(score,text(PC2 ~ PC1, labels=as.factor(rownames(score)), pos = 3, cex=0.5))
+with(score,text(PC2 ~ PC1, labels=as.factor(rownames(score)), pos = 3, cex=1.2))
 
 
 
@@ -244,7 +240,7 @@ segments(x0 = ss1a$x0, x1 = ss1a$x1, y0 = ss1a$y0, y1 = ss1a$y1, col='purple')
 
 points(PC2 ~ PC1, col=as.factor(rownames(score)), pch = 19, xlab='V1', ylab='V2',data=score)
 
-with(score,text(PC2 ~ PC1, labels=as.factor(rownames(score)), pos = 3, cex=0.5))
+with(score,text(PC2 ~ PC1, labels=as.factor(rownames(score)), pos = 3, cex=1.2))
 
 
 
@@ -258,21 +254,21 @@ X1 <- as.matrix(dat2)
 head(X1)
 
 
-par(mfrow=c(2,2))
- 
+par(mfrow=c(1,2))
+
 # PLOT 5: SCORES
 
 
 plot(PC2 ~ PC1, col = as.factor(rownames(dat2)), 
      xlim=c(-2.8,2.8), ylim=c(-2.8,2.8), pch = 19, 
-     main="Scores Weighted by Eigenvalues", data = dat2)
+     main="Score Matrix Values", data = dat2)
 
 abline(v = 0,h = 0, col = c("red","purple"))
 
 
 points(PC2 ~ PC1, col = as.factor(rownames(dat2)), xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),pch = 19,data = dat2)
 
-with(dat2,text(PC2 ~ PC1, labels=as.factor(rownames(dat2)), pos=2, cex = 0.7))
+with(dat2,text(PC2 ~ PC1, labels=as.factor(rownames(dat2)), pos=2, cex=1.2))
 
 
 
@@ -300,55 +296,6 @@ arrows(x0 = 0, y0 = 0, x1 = lambda[2]*e_vectors[1,2],
 
 points(Rot2 ~ Rot1, col = as.factor(rownames(rot1)), xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),
        pch = 19,main="Data Rotation",data = rot1)
-with(rot1,text(Rot2 ~ Rot1, labels=as.factor(rownames(rot1)), pos=3, cex = 0.7))
+with(rot1,text(Rot2 ~ Rot1, labels=as.factor(rownames(rot1)), pos=3, cex=1.2))
 
 
-
-# PLOT 7: UNDOING THE EXPANSIVE OR CONTRACTING EFFECT OF EIGENVALUES:
-
-contract <- rot %*% solve(lambda_matrix)
-contract_dat <- as.data.frame(contract)
-colnames(contract_dat) <- c("Recons.1","Recons.2")
-head(contract_dat)
-
-plot(Recons.2 ~ Recons.1, col = as.factor(rownames(contract_dat)), xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),pch = 19, 
-     main="Data Contraction", 
-     xlab="Reconstructed Atomic Number", 
-     ylab="Reconstructed melting.point",data = contract_dat)
-
-abline(v=0,h=0, col = "dark gray")
-
-abline(0, e_vectors[2,1]/e_vectors[1,1],col='red')
-abline(0, e_vectors[1,2]/e_vectors[2,2],col='purple')
-
-arrows(x0 = 0, y0 = 0, x1 = lambda[1]*e_vectors[1,1], 
-       y1 = lambda[1]*e_vectors[2,1],col="red")
-arrows(x0 = 0, y0 = 0, x1 = lambda[2]*e_vectors[1,2], 
-       y1 = lambda[2]*e_vectors[2,2],col="blue")
-
-points(Recons.2 ~ Recons.1, col = as.factor(rownames(contract_dat)), xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),pch = 19, main="Data Contraction", 
-       xlab="Reconstructed Atomic Number", ylab="Reconstructed melting.point",data = contract_dat)
-
-with(contract_dat,text(Recons.2 ~ Recons.1, labels =as.factor(rownames(contract_dat)), pos=3, cex = 0.7))
-
-
-
-# PLOT 8: COMPARING TO ORIGINAL DATA:
-
-plot(melting.point ~ atomic.no, col = as.factor(rownames(scaled_dat)), 
-     xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),pch = 19, 
-     main="Original Data",data = scaled_dat)
-
-abline(v=0,h=0, col = "dark gray")
-
-abline(0, e_vectors[2,1]/e_vectors[1,1],col='red')
-abline(0, e_vectors[1,2]/e_vectors[2,2],col='purple')
-
-arrows(x0 = 0, y0 = 0, x1 = lambda[1]*e_vectors[1,1], 
-       y1 = lambda[1]*e_vectors[2,1],col="red")
-arrows(x0 = 0, y0 = 0, x1 = lambda[2]*e_vectors[1,2], 
-       y1 = lambda[2]*e_vectors[2,2],col="blue")
-
-points(melting.point ~ atomic.no, col = as.factor(rownames(scaled_dat)), 
-       xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),pch = 19, data = scaled_dat)
-with(scaled_dat,text(melting.point ~ atomic.no, labels = as.factor(rownames(scaled_dat)), pos=3, cex = 0.7))
