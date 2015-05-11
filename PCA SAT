@@ -36,7 +36,7 @@ plot(ev, pch = 19, col = as.factor(row.names(ev)),
      xaxt ="n", ylim = c(-.7,.7), main = "Loadings")
 axis1 = axis(1,at = seq(0.705,0.708, by=0.001))
 abline(h = 0, col = "firebrick")
-with(ev,text(PC2 ~ PC1, labels = as.factor(rownames(ev)), pos=2))
+with(ev,text(V2 ~ V1, labels = as.factor(rownames(ev)), pos=2))
 
 par(mfrow = c(1,1))
 
