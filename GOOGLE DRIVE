@@ -1,5 +1,9 @@
 # Documents should be available as csv google spreadsheets with sharing attibutes activated.
+# Right-click on document -> Share -> Click on "Get Shareable Link" -> Click on copy link and allow
+# anyone with the link to view it: "Anyone with the link can View".
 
 install.packages('gsheet')
 library(gsheet)
-dat <- gsheet2tbl('https://drive.google.com/open?id=1X9ccexhCU2xNI99MDj6WWRdOza1J_IbTSI-yuPDsxOE&authuser=0')
+dat <- gsheet2tbl('')
+
+# Example between quotes: https://drive.google.com/open?id=1X9ccexhCU2xNI99MDj6WWRdOza1J_IbTSI-yuPDsxOE&authuser=0
