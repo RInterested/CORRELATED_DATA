@@ -105,7 +105,8 @@ par(mfrow=c(1,2))
 
 
 plot(melting.point ~ atomic.no, col = as.factor(rownames(scaled_dat)), 
-     main="Distance to First EigenV", pch = 19, data = scaled_dat)
+     main="Distance to First EigenV", pch = 19, 
+     xlim=c(-2.2, 2.2), ylim = c(-2.2,2.2), data = scaled_dat)
 abline(v=0,h=0, col = "dark gray")
 
 #Overlap pertinent evectors
@@ -142,14 +143,15 @@ segments(x0 = ss$x0, x1 = ss$x1, y0 = ss$y0, y1 = ss$y1, col='red')
 
 points(melting.point ~ atomic.no, col = as.factor(rownames(scaled_dat)), pch = 19, data = scaled_dat)
 with(scaled_dat,text(melting.point ~ atomic.no, labels = as.factor(rownames(scaled_dat)),
-                     pos=1, cex=1.2))
+                     pos=1, cex=1.4))
 
 
 
 #SECOND PLOT:
 
 plot(melting.point ~ atomic.no, col = as.factor(rownames(scaled_dat)), pch = 19, 
-     main="Distance to 2nd EigenV",data = scaled_dat)
+     main="Distance to 2nd EigenV",
+     xlim=c(-2.2, 2.2), ylim = c(-2.2,2.2), data = scaled_dat)
 
 abline(v = 0,h = 0, col = "dark gray")
 
@@ -177,7 +179,7 @@ segments(x0 = ssa$x0, x1 = ssa$x1, y0 = ssa$y0, y1 = ssa$y1, col='purple')
 points(melting.point ~ atomic.no, col = as.factor(rownames(scaled_dat)), pch = 19, data = scaled_dat)
 
 with(scaled_dat,text(melting.point ~ atomic.no, labels = as.factor(rownames(scaled_dat)),
-                     pos=1, cex=1.2))
+                     pos=1, cex=1.4))
 
 
 
@@ -189,7 +191,8 @@ with(scaled_dat,text(melting.point ~ atomic.no, labels = as.factor(rownames(scal
 score <- as.data.frame(score_matrix)
 
 plot(PC2 ~ PC1, col = as.factor(rownames(score)), pch = 19, 
-     main='Plot of Scores with xy Axis = Eigen Vectors',xlab='PC1', ylab='PC2',data=score)
+     main='Plot of Scores with xy Axis = Eigen Vectors',
+     xlim=c(-2.2, 2.2), ylim = c(-2.2,2.2), xlab='PC1', ylab='PC2',data=score)
 
 abline(h = 0, col = 'red')
 abline(v = 0, col='purple')
@@ -209,7 +212,7 @@ segments(x0 = ss1$x0, x1 = ss1$x1, y0 = ss1$y0, y1 = ss1$y1, col='red')
 
 
 points(PC2 ~ PC1, col=as.factor(rownames(score)), pch = 19, xlab='V1', ylab='V2',data=score)
-with(score,text(PC2 ~ PC1, labels=as.factor(rownames(score)), pos = 3, cex=1.2))
+with(score,text(PC2 ~ PC1, labels=as.factor(rownames(score)), pos = 3, cex=1.4))
 
 
 
@@ -218,7 +221,7 @@ with(score,text(PC2 ~ PC1, labels=as.factor(rownames(score)), pos = 3, cex=1.2))
 
 plot(PC2 ~ PC1, col=as.factor(rownames(score)), 
      main='Plot of Scores with xy Axis = Eigen Vectors',
-     pch = 19, 
+     pch = 19, xlim=c(-2.2, 2.2), ylim = c(-2.2,2.2),
      xlab='PC1', ylab='PC2',data=score)
 
 abline(h = 0, col = 'red')
@@ -240,7 +243,7 @@ segments(x0 = ss1a$x0, x1 = ss1a$x1, y0 = ss1a$y0, y1 = ss1a$y1, col='purple')
 
 points(PC2 ~ PC1, col=as.factor(rownames(score)), pch = 19, xlab='V1', ylab='V2',data=score)
 
-with(score,text(PC2 ~ PC1, labels=as.factor(rownames(score)), pos = 3, cex=1.2))
+with(score,text(PC2 ~ PC1, labels=as.factor(rownames(score)), pos = 3, cex=1.4))
 
 
 
@@ -260,7 +263,7 @@ par(mfrow=c(1,2))
 
 
 plot(PC2 ~ PC1, col = as.factor(rownames(dat2)), 
-     xlim=c(-2.8,2.8), ylim=c(-2.8,2.8), pch = 19, 
+     pch = 19, xlim=c(-2.5, 2.2), ylim = c(-2.2,2.2),
      main="Score Matrix Values", data = dat2)
 
 abline(v = 0,h = 0, col = c("red","purple"))
@@ -268,7 +271,7 @@ abline(v = 0,h = 0, col = c("red","purple"))
 
 points(PC2 ~ PC1, col = as.factor(rownames(dat2)), xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),pch = 19,data = dat2)
 
-with(dat2,text(PC2 ~ PC1, labels=as.factor(rownames(dat2)), pos=2, cex=1.2))
+with(dat2,text(PC2 ~ PC1, labels=as.factor(rownames(dat2)), pos=2, cex=1.4))
 
 
 
@@ -278,9 +281,9 @@ with(dat2,text(PC2 ~ PC1, labels=as.factor(rownames(dat2)), pos=2, cex=1.2))
 rot <- X1 %*% solve(e_vectors)
 
 rot1 <- as.data.frame(rot)
-colnames(rot1) <- c("Rot1","Rot2")
+colnames(rot1) <- c("atomic.no","melting.point")
 
-plot(Rot2 ~ Rot1, col = as.factor(rownames(rot1)), xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),
+plot(melting.point ~ atomic.no, col = as.factor(rownames(rot1)), xlim=c(-2.2, 2.2), ylim = c(-2.2,2.2),
      pch = 19,main="Data De-Rotation",data = rot1)
 
 abline(v = 0, h = 0, col = "dark gray")
@@ -290,12 +293,12 @@ abline(0, e_vectors[2,1]/e_vectors[1,1],col='red')
 abline(0, e_vectors[1,2]/e_vectors[2,2],col='purple')
 
 arrows(x0 = 0, y0 = 0, x1 = lambda[1]*e_vectors[1,1], 
-       y1 = lambda[1]*e_vectors[2,1],col="red")
+       y1 = lambda[1]*e_vectors[2,1], lwd = 2, col="red")
 arrows(x0 = 0, y0 = 0, x1 = lambda[2]*e_vectors[1,2], 
-       y1 = lambda[2]*e_vectors[2,2],col="blue")
+       y1 = lambda[2]*e_vectors[2,2], lwd = 2, col="blue")
 
-points(Rot2 ~ Rot1, col = as.factor(rownames(rot1)), xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),
+points(melting.point ~ atomic.no, col = as.factor(rownames(rot1)), xlim=c(-2.8,2.8),ylim=c(-2.8,2.8),
        pch = 19,main="Data Rotation",data = rot1)
-with(rot1,text(Rot2 ~ Rot1, labels=as.factor(rownames(rot1)), pos=3, cex=1.2))
+with(rot1,text(melting.point ~ atomic.no, labels=as.factor(rownames(rot1)), pos=3, cex=1.4))
 
 
