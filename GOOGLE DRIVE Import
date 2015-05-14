@@ -6,7 +6,9 @@ install.packages('gsheet')
 
 
 library(gsheet)
-dat <- gsheet2tbl('')
+ <- gsheet2tbl('')
+ 
+# Assign the read data frame to a name (e.g. "dat").
 
 # Example between quotes - corresponding to a random link: 
 # https://drive.google.com/open?id=1X9ccexhCU2xNI99MDj6WWRdOza1J_IbTSI-yuPDsxOE&authuser=0
