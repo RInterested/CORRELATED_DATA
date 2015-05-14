@@ -125,4 +125,10 @@ mtcars[mtcars$cyl==6,mtcars$mpg]
 Error in `[.data.frame`(mtcars, mtcars$cyl == 6, mtcars$mpg) : 
   undefined columns selected
 
+# RETURN THE VALUES OF ALL COLUMNS CONDITIONAL ON MULTIPLE SELECTION CRITERIA:
 
+mtcars[mtcars$cyl==6 & mtcars$wt==2.875,]
+
+# ... and to find out which row fulfills these criteria:
+
+which(mtcars$cyl==6 & mtcars$wt==2.875)
