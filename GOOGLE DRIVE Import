@@ -5,9 +5,8 @@
 install.packages('gsheet')
 
 library(gsheet)
-read.csv(text = gsheet2text(url, format = "csv"))
+yvals <- read.csv(text = gsheet2text('https://docs.google.com/spreadsheets/d/1_seSDl_RAySDLRXYjr2HAwzfKTSHB2ZKK2TA-C8JIxk/edit?usp=sharing',format ='csv'))
  
-# Assign the read data frame to a name (e.g. "dat").
-
+# Assign the read data frame to a name (e.g. "yvals").
 # Example between quotes - corresponding to a random link: 
-# https://drive.google.com/open?id=1X9ccexhCU2xNI99MDj6WWRdOza1J_IbTSI-yuPDsxOE&authuser=0
+# https://docs.google.com/spreadsheets/d/1_seSDl_RAySDLRXYjr2HAwzfKTSHB2ZKK2TA-C8JIxk/edit?usp=sharing',format ='csv
