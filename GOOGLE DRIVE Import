@@ -4,9 +4,8 @@
 
 install.packages('gsheet')
 
-
 library(gsheet)
- <- gsheet2tbl('')
+read.csv(text = gsheet2text(url, format = "csv"))
  
 # Assign the read data frame to a name (e.g. "dat").
 
