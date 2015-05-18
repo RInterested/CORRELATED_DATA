@@ -5,7 +5,7 @@
 install.packages('gsheet')
 
 library(gsheet)
-name <- read.csv(text = 
+data <- read.csv(text = 
 gsheet2text('URL',
 format ='csv'))
  
