@@ -1,3 +1,6 @@
+# Code for my posting in:
+# http://stats.stackexchange.com/questions/147442/simulating-random-vector-x-in-r-to-confirm-with-example-that-covax-a-covx/147448#147448
+
 # X is an n dimensional Random Vector:
 
 set.seed(0)
