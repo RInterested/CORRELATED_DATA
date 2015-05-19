@@ -1,3 +1,6 @@
+# This is my code for the posting in:
+# http://stats.stackexchange.com/questions/38856/how-to-generate-correlated-random-numbers-given-means-variances-and-degree-of/149563#149563
+
 cor_samples <- function(r, n, mean1, mean2, sd1, sd2){
   C <- matrix(c(1,r,r,1), nrow = 2)
   require(mvtnorm)
