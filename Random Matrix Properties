@@ -1,0 +1,34 @@
+# X is an n dimensional Random Vector:
+
+set.seed(0)
+n <- 2
+a <- c(rnorm(1e6,6,3))
+b <- c(rnorm(1e6,11,8))
+X <- rbind(a,b)
+
+str(X) # 2 rows 1e6 columns 
+
+# A is a fixed r x n matrix:
+
+r <- 2
+A <- matrix(c(9, 100, 20, 200), nrow=2)
+
+# b is a fixed vector in R^r:
+
+b <- c(1, 2)
+
+# Cov(AY + b) = A Cov(Y) A'
+
+#RHS Equation:
+
+# cov(t(X)) = cov(X):
+
+A %*% cov(t(X)) %*% t(A)
+
+#LHS Equation:
+# cov(t(V)) = cov(V):
+
+V <- A%*%X + b
+cov(t(V))
+
+all.equal(cov(t(V)), A %*% cov(t(X)) %*% t(A))
