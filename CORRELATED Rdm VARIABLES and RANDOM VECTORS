@@ -1,4 +1,5 @@
-#http://stats.stackexchange.com/questions/149321/generating-and-working-with-random-vectors-in-r/149460#149460
+# Code for my entry on the post:
+# http://stats.stackexchange.com/questions/149321/generating-and-working-with-random-vectors-in-r/149460#149460
 # Creating bivariate random vectors with specified correlation between elements
 # and different marginal distributions:
 
