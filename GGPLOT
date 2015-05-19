@@ -1,6 +1,0 @@
-require(ggplot2)
-mtcars$am   <- factor(mtcars$am,   0:1, c('automatic','manual'))
-ggplot(mtcars,aes(wt,mpg)) + 
-  geom_point(aes(color=cyl),size=2) + 
-  geom_smooth(method="lm", color="royalblue") + facet_grid(.~ am) +
-  theme_bw()
