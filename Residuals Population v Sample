@@ -1,0 +1,115 @@
+# Apropos of http://stats.stackexchange.com/questions/152855/a-question-on-notation-in-the-least-squares-method/152861#152861
+# The exercise focused on generating a nice bell curve from the residuals at a thin slice of the xy plot of two variables 
+# with a fixed correlation of 0.7 in a simulation of one million random data points, and then seeing how this doesn't hold
+# with a sample of this "population". However, given the absence of sterokadesticity (plot of residuals) the distribution of 
+# the residuals across all the x axis does follow a nice Gaussian:
+
+
+C <- matrix(c(1,0.7,0.7,1), nrow = 2)
+
+set.seed(70)
+
+library(mvtnorm)
+SN <- rmvnorm(mean = c(0,0), sig = C, n = 1e6)
+X1 <- SN[,1]; X2 <- SN[,2]
+data <- data.frame(cbind(X1,X2))
+
+cor(X1,X2)
+
+fit <- lm(X2 ~ X1, data)
+plot(X2 ~ X1, pch=19, cex=0.3 , col='firebrick',xaxt='n')
+axis(1, c(seq(from = -4,to= 4,by=0.1)))
+
+abline(fit,X1,col="orange",lwd=3)
+
+
+
+plot(X2 ~ X1, main = "The Population Data",
+     pch=19, cex=0.3 , col='firebrick',
+     xaxt='n')
+axis(1, c(seq(from = -4,to= 4,by=0.1)))
+
+abline(v=0,lwd=1, col = "black")
+
+
+slice <- subset(data, X1 > -0.01 & X1 < 0.01)
+head(slice)
+str(slice)
+
+dat <- data.frame(X1 = slice$X1)
+
+predicted_slice <- predict(fit, dat)
+str(predicted_slice)
+
+residuals_slice <- predicted_slice - slice[,2]
+
+hist(residuals_slice,freq = F,
+     col="navajowhite4", border="white",
+     xlim=c(-2,2), breaks= 90,
+     ylim=c(0,0.6),
+     main = expression(paste("Population Residuals, epsilon"," ", (epsilon))),
+     xlab = "Residuals Fitted Line at Slice between -0.01 < X1 < 0.01")
+lines(density(residuals_slice),lwd=4,col='royalblue3')
+
+hist(fit$residuals,freq = F,
+     col="navajowhite4", border="white",
+     breaks= 90,
+     main = expression(paste("Population Residuals, epsilon"," ", (epsilon))),
+     xlab = "Residuals Fitted Line at Slice")
+lines(density(residuals_slice),lwd=4,col='royalblue3')
+
+# With just a sample:
+
+
+
+
+SM <- data[sample(nrow(data), 1000), ]
+Y1 <- SM[,1]; Y2 <- SM[,2]
+data2 <- data.frame(cbind(Y1,Y2))
+
+
+fit2 <- lm(Y2 ~ Y1, data2)
+
+plot(Y2 ~ Y1, pch=19, cex=0.3 , col='firebrick',xaxt='n',
+     main = "The Sample Data")
+axis(1, c(seq(from = -4,to= 4,by=0.1)))
+
+abline(fit2,Y1,col="orange",lwd=3)
+
+
+
+plot(Y2 ~ Y1, pch=19, cex=0.3 , col='firebrick',xaxt='n')
+axis(1, c(seq(from = -4,to= 4,by=0.1)))
+
+abline(v=0,lwd=1, col = "black")
+
+
+slice2 <- subset(data2, Y1 > -0.01 & Y1 < 0.01)
+head(slice)
+str(slice)
+
+dat2 <- data.frame(Y1 = slice2$Y1)
+
+predicted_slice2 <- predict(fit2, dat2)
+str(predicted_slice2)
+
+residuals_slice2 <- predicted_slice2 - slice2[,2]
+
+
+hist(residuals_slice2,freq = F,
+     col="firebrick", border="white", ylim=c(0,2),
+     main = expression(paste("Sample Residuals,"," ", e)),
+     xlab = "Residuals Fitted Line at Slice between -0.01 < X1 < 0.01")
+
+lines(density(residuals_slice2),lwd=4,col='royalblue3')
+
+plot(fit2$residuals, pch=19, col='red', cex =0.3)
+abline(h=0)
+sum(fit2$residuals)
+
+hist(fit2$residuals,freq = F,
+     col="firebrick", border="white", ylim=c(0,0.6),
+     main = expression(paste("Sample Residuals")),
+     xlab = "Residuals Fitted Line")
+
+lines(density(fit2$residuals),lwd=4,col='royalblue3')
