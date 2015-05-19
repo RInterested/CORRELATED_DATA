@@ -92,7 +92,7 @@ names(ratings)=c(
 library(qgraph)
 # creates grouping of variables to be assigned different colors.
 gr<-list(1:4,5:8,9:12,13:15) 
-qgraph(cor(ratings),layout="spring", groups=gr, labels=names(ratings), label.scale=FALSE, minimum=0.50)
+qgraph(cor(ratings),layout="spring", groups=gr, labels=names(ratings))
 
 # Calculates z-scores so that regression analysis will yield 
 # standardized regression weights
